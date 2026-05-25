@@ -1,6 +1,4 @@
-git add .
-git commit -m "fix: remove nested git from Daily-Flow"
-git push origin main'use client';
+'use client';
 
 import { useState, useEffect } from 'react';
 import { useTheme } from '@/lib/theme';
