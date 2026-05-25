@@ -1,0 +1,278 @@
+# DailyFlow Backend API 
+
+> Smart Goal Planning — REST API built with Node.js, Express, and MongoDB
+
+[![Node.js](https://img.shields.io/badge/Node.js-18%2B-green)](https://nodejs.org)
+[![Express](https://img.shields.io/badge/Express-4.x-blue)](https://expressjs.com)
+[![MongoDB](https://img.shields.io/badge/MongoDB-Atlas-green)](https://mongodb.com)
+[![Render](https://img.shields.io/badge/Deployed-Render-purple)](https://dailyflow-backend-dqou.onrender.com)
+
+---
+
+## Live API
+
+**Base URL:**
+```
+https://dailyflow-backend-dqou.onrender.com
+```
+
+>  **Note:** This API is hosted on Render's free tier. The server may take **50–60 seconds** to respond on the first request after a period of inactivity (cold start). Subsequent requests will be fast.
+
+---
+
+##  Health Check
+
+Use this endpoint to check if the server is alive paste the url :
+
+```
+GET https://dailyflow-backend-dqou.onrender.com/health
+```
+
+**Response:**
+```json
+{
+  "success": true,
+  "message": "DailyFlow API is running"
+}
+```
+
+---
+
+
+##  Tech Stack
+
+| Technology | Purpose |
+|---|---|
+| Node.js | Runtime |
+| Express.js | Web framework |
+| MongoDB Atlas | Database |
+| Mongoose | ODM |
+| JWT | Authentication |
+| Bcryptjs | Password hashing |
+| Nodemailer | Email sending |
+| Winston | Logging |
+
+---
+
+## Project Structure
+
+```
+dailyflow-backend/
+└── backend/
+    ├── config/
+    │   └── db.js               # MongoDB connection
+    ├── controllers/
+    │   └── authController.js   # Auth logic
+    ├── middleware/
+    │   ├── auth.js             # JWT protect middleware
+    │   ├── validate.js         # Request validation rules
+    │   └── errorHandler.js     # Global error handler
+    ├── models/
+    │   └── User.js             # User schema
+    ├── routes/
+    │   └── authRoutes.js       # Auth routes
+    ├── utils/
+    │   ├── email.js            # Nodemailer + email templates
+    │   ├── logger.js           # Winston logger
+    │   ├── token.js            # JWT sign utility
+    │   └── AppError.js         # Custom error class
+    ├── app.js                  # Express app setup
+    ├── server.js               # Entry point
+    └── package.json
+```
+
+---
+
+##  API Endpoints
+
+All endpoints are prefixed with `/api/auth`
+
+### Health Check
+```
+GET /health
+```
+
+---
+
+### Signup
+```
+POST /api/auth/signup
+```
+**Body:**
+```json
+{
+  "fullName": "John Doe",
+  "email": "john@example.com",
+  "username": "johndoe",
+  "phoneNumber": "+2348012345678",
+  "password": "secret123",
+  "confirmPassword": "secret123"
+}
+```
+**Response:** JWT token + user data
+**Email sent:**  Welcome email but not working for now still on progress
+
+---
+
+### Login
+```
+POST /api/auth/login
+```
+**Body:**
+```json
+{
+  "email": "john@example.com",
+  "password": "secret123"
+}
+```
+**Response:** JWT token + user data
+**Email sent:**  Login notification email but not working for now still on progress
+
+---
+
+### Get Current User 
+```
+GET /api/auth/me
+```
+**Headers:**
+```
+Authorization: Bearer <your_jwt_token>
+```
+**Response:** Logged-in user's profile
+
+---
+
+### Forgot Password
+```
+POST /api/auth/forgot-password
+```
+**Body:**
+```json
+{
+  "email": "john@example.com"
+}
+```
+**Response:** Generic success message (OTP sent to email)
+**Email sent:** 6-digit OTP email (expires in 10 minutes) but not working for now still on progress
+
+---
+
+### Verify OTP
+```
+POST /api/auth/verify-otp
+```
+**Body:**
+```json
+{
+  "email": "john@example.com",
+  "otp": "482910"
+}
+```
+**Response:** Short-lived `resetToken` (15 minutes)
+
+---
+
+### Reset Password
+```
+POST /api/auth/reset-password
+```
+**Body:**
+```json
+{
+  "email": "john@example.com",
+  "otp": "482910",
+  "newPassword": "newSecret123",
+  "confirmPassword": "newSecret123"
+}
+```
+**Response:** Success message
+**Email sent:**  Password changed confirmation email
+
+---
+
+##  Forgot Password Flow
+
+```
+Step 1: POST /forgot-password  →  OTP sent to email
+Step 2: POST /reset-password   →  verify OTP + set new password 
+```
+
+---
+
+## Security Features
+
+- Passwords hashed with **bcryptjs** (12 salt rounds)
+- OTP stored as **SHA-256 hash** — never plain text
+- OTP expires in **10 minutes**
+- Max **5 wrong OTP attempts** before invalidation
+- JWT tokens expire in **7 days**
+- Generic error messages to prevent email enumeration
+- Cannot reuse old password on reset
+
+---
+
+## Environment Variables
+
+Create a `.env` file in the `backend` folder:
+
+```env
+# Server
+PORT=5000
+NODE_ENV=development
+
+# Database
+MONGO_URI=mongodb+srv://username:password@cluster.mongodb.net/dailyflow
+
+# JWT
+JWT_SECRET=your_super_secret_jwt_key
+JWT_EXPIRES_IN=7d
+OTP_RESET_EXPIRES_IN=15m
+
+# Email (Brevo/Gmail/Mailgun)
+EMAIL_HOST=smtp-relay.brevo.com
+EMAIL_PORT=587
+EMAIL_USER=your_email@example.com
+EMAIL_PASS=your_smtp_password
+EMAIL_FROM=DailyFlow <noreply@dailyflow.app>
+```
+
+---
+
+## Running Locally
+
+```bash
+# Clone the repo
+git clone https://github.com/YOUR_USERNAME/dailyflow-backend.git
+cd dailyflow-backend/backend
+
+# Install dependencies
+npm install
+
+# Create .env file and fill in your values
+cp .env.example .env
+
+# Start development server
+npm run dev
+
+# Start production server
+npm start
+```
+
+---
+
+##  Email Notifications
+
+DailyFlow sends beautiful HTML emails for:
+
+| Event | Email |
+|---|---|
+| Signup |  Welcome email |
+| Login | Login notification |
+| Forgot password |  OTP code email |
+| Password reset |  Password changed confirmation |
+
+---
+
+##  License
+
+MIT © DailyFlow
