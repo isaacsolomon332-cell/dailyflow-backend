@@ -1,0 +1,17 @@
+{
+  "name": "DailyFlow - Life Dashboard",
+  "short_name": "DailyFlow",
+  "description": "Track goals, manage projects, and build habits",
+  "start_url": "/dashboard",
+  "display": "standalone",
+  "background_color": "#0f172a",
+  "theme_color": "#6366f1",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/favicon.ico",
+      "sizes": "64x64",
+      "type": "image/x-icon"
+    }
+  ]
+}
