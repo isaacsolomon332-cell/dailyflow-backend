@@ -8,14 +8,12 @@ const app = express();
 
 
 
-
-
 app.use(cors({
   origin: [
     "http://localhost:3000",
     "http://localhost:3001",
-    "https://dailyflow-app-frontend.vercel.app",
-
+    "https://daily-flow-git-main-isaacsolomon332-cells-projects.vercel.app",
+    "https://daily-flow-mhxajzpvp-isaacsolomon332-cells-projects.vercel.app",
   ],
   credentials: true,
   methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
